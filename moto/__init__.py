@@ -13,13 +13,14 @@
 # limitations under the License.
 
 from typing import List, Mapping, Tuple, Union
+import time
 
 from moto.motion_connection import MotionConnection
 from moto.state_connection import StateConnection
 from moto.io_connection import IoConnection
 from moto.real_time_motion_connection import RealTimeMotionConnection
 from moto.control_group import ControlGroupDefinition, ControlGroup
-from moto.simple_message import JointTrajPtExData, JointTrajPtFullEx, JointTrajPtFull
+from moto.simple_message import JointTrajPtExData, JointTrajPtFullEx, JointTrajPtFull, ValidFields
 
 
 class Motion:
@@ -175,3 +176,85 @@ class Moto:
     @property
     def rt(self):
         return RealTimeMotion(self._real_time_motion_connection)
+
+    def go_to(self, position):
+        '''
+            Args:
+                position (dictionary): Dictionary of groupid-List pair. 
+        '''
+        print("asdf")
+
+        # TODO: Assert that the position lies within joint space.
+        # TODO: Check that joint velocities are within some limit. 
+                
+        # TODO: Assert that the state connection is actually running.
+        # Otherwise this will return None.
+        joint_feedback = self.state.joint_feedback_ex()
+
+        start_joint_traj_pt_data = [] 
+        end_joint_traj_pt_data = [] 
+
+        for _, group in self.control_groups.items():
+            start_joint_traj_pt_data.append(
+                JointTrajPtExData(
+                    groupno=group.groupno,
+                    valid_fields=ValidFields.TIME | ValidFields.POSITION | ValidFields.VELOCITY,
+                    time=0.0,
+                    # TODO: Confirm that joint_feedback_data is sorted by the
+                    # groupno.
+                    pos=joint_feedback.joint_feedback_data[group.groupno].pos,
+                    vel=[0.0] * 10,
+                    acc=[0.0] * 10,
+                )
+            )
+
+            end_joint_traj_pt_data.append(
+                JointTrajPtExData(
+                    groupno=group.groupno,
+                    valid_fields=ValidFields.TIME | ValidFields.POSITION | ValidFields.VELOCITY,
+                    time=5.0,
+                    pos=position[group.groupno],
+                    vel=[0.0] * 10,
+                    acc=[0.0] * 10,
+                )
+            )
+
+        start = JointTrajPtFullEx(
+            number_of_valid_groups=len(position),
+            sequence=0,
+            joint_traj_pt_data=start_joint_traj_pt_data
+        )
+
+        end = JointTrajPtFullEx(
+            number_of_valid_groups=len(position),
+            sequence=1,
+            joint_traj_pt_data=end_joint_traj_pt_data
+        )
+
+        # Check that trajectory mode is on.
+        ret = self.motion.start_trajectory_mode()
+        while not self.state.robot_status().motion_possible and \
+            not self.state.robot_status().drives_powered:
+            time.sleep(0.1)
+
+        # TODO: Assert that the motion connection is active.
+        ret1 = self.motion.send_joint_trajectory_point(start)
+        ret2 = self.motion.send_joint_trajectory_point(end)
+        
+
+        time.sleep(1)
+        # TODO: This isn't a reliable way to know if the trajectory is complete.
+        while self.state.robot_status().in_motion:
+            print(self.state.robot_status())
+            time.sleep(0.1)
+
+        
+        # self.motion.stop_trajectory_mode()
+        # self.motion.stop_servos()
+    
+    
+    def go_home(self):
+        pos_dict = {}
+        for i in range(len(self.control_groups)):
+            pos_dict[i] = [0.0] * 10
+        self.go_to(pos_dict)
