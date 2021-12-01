@@ -163,7 +163,10 @@ An extension of the current robot side driver with support for real-time control
 ## Troubleshooting 
 This is based on experiences with the YRC1000 controller, but should be similar for other controllers as well. 
 
-### When connection I get `[Errno 113] No route to host` 
+### When connecting I get `ConnectionRefusedError: [Errno 111] Connection refused`
+Reset any errors shown on the pendant.
+
+### When connecting I get `[Errno 113] No route to host` 
 The IP is not correct.  
 You can find the IP of the controller in the pendant by performing these steps: 
 
