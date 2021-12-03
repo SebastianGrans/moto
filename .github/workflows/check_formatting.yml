@@ -11,8 +11,14 @@ jobs:
           with:
             ref: ${{ github.event.pull_request.head.sha }}
         
-        - run: echo ${GITHUB_WORKSPACE}
+        - name: Check that new files are blackened
+          run: |
+            chmod +x "${GITHUB_WORKSPACE}/.github/workflows/check_formatting.sh"
+            bash "${GITHUB_WORKSPACE}/.github/workflows/check_formatting.sh"
           shell: bash
+          with:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
         - name: print git log
           run: |
