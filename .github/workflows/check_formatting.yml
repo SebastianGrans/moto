@@ -1,4 +1,5 @@
 # Automatically check that the new code is black formatted. 
+
 name: Black formatting
 on: [pull_request]
 
