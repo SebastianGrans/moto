@@ -11,11 +11,6 @@ jobs:
           with:
             ref: ${{ github.event.pull_request.head.sha }}
         
-        - name: Check that new files are blackened
-        - run: echo ${GITHUB_WORKSPACE}
-          shell: bash
-          with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
         - name: print git log
