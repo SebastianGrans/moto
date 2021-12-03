@@ -11,8 +11,10 @@ jobs:
           with:
             ref: ${{ github.event.pull_request.head.sha }}
         
-        - name: Python Black Check
-          uses: RojerGS/python-black-check@v1.2
+        - name: Check that new files are blackened
+          uses: rgasper/python-black-pull-request-action@master
 
 
-        - run: git --no-pager log -5
+        - name: Retrieve version
+          run: |
+            echo "::set-output name=TAG_NAME::$(git --no-pager log -5)')"
