@@ -1,5 +1,10 @@
 # Automatically check that the new code is black formatted. 
 name: Black formatting
 on: [pull_request]
-    - name: Python Black Check
-      uses: RojerGS/python-black-check@v1.2
+
+jobs:
+    check-black-formatting:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Python Black Check
+          uses: RojerGS/python-black-check@v1.2
