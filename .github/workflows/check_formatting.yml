@@ -18,10 +18,3 @@ jobs:
           shell: bash
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-        - name: print git log
-          run: |
-            echo "::set-output name=TAG_NAME::$(git --no-pager log -5)')"
-
-            
