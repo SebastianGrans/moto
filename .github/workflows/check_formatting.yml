@@ -13,8 +13,8 @@ jobs:
         
         - name: Check that new files are blackened
         - run: |
-            chmod +x ./public/scripts/test.sh
-            .github/workflows/check_formatting.sh
+            chmod +x "${GITHUB_WORKSPACE}/.github/workflows/check_formatting.sh"
+            "${GITHUB_WORKSPACE}/.github/workflows/check_formatting.sh"
           shell: bash
           with:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
