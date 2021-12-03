@@ -1,13 +1,11 @@
 import numpy
 
-import os 
+import os
 
-def asdf(something = 2):
-    ugly=5
-    print("asdfkdl "\
-    +"aasdf "\
-                    + "asdf")
-    
+
+def asdf(something=2):
+    ugly = 5
+    print("asdfkdl " + "aasdf " + "asdf")
 
 
 asdf()
