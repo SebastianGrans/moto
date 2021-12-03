@@ -13,7 +13,8 @@ jobs:
         
         - name: Check that new files are blackened
           uses: rgasper/python-black-pull-request-action@master
-
+          env:
+            GITHUB_TOKEN: asdf
 
         - name: print git log
           run: |
